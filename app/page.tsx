@@ -93,7 +93,7 @@ export default function Home() {
           <div className=" border-gray-300 dark:border-gray-600 h-96">
             {video ? (
               <video
-                className="w-full aspect-video"
+                className="w-full h-full"
                 controls
                 src={video}
                 ref={videoRef}
@@ -131,7 +131,7 @@ export default function Home() {
           <div className="h-96">
             {video ? (
               processedVideo ? (
-                <video className="w-fit" controls src={processedVideo}></video>
+                <video className="w-full h-full" controls src={processedVideo}></video>
               ) : (
                 <div className="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-full flex justify-center">
                   <h3 className=" my-auto text-slate-100">Proccessing...</h3>
