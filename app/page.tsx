@@ -1,15 +1,68 @@
 "use client";
 
-import { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+
+interface VideoInfoProps {
+  video: HTMLVideoElement | null; // video can be an HTMLVideoElement or null
+  fileSizeInBytes: React.MutableRefObject<number>;
+  bitrateData: { timestamp: number; bitrate: number }[];
+}
 
 export default function Home() {
   const [video, setVideo] = useState("");
   const [processedVideo, setProcessedVideo] = useState("");
-  const [resolution, setResolution] = useState({ width: 0, height: 0 });
-  const [duration, setDuration] = useState(0);
+
+  const [rerender, setReRender] = useState(false);
+
   const videoRef = useRef<HTMLVideoElement>(null);
+  const processedVideoRef = useRef<HTMLVideoElement>(null);
+
   const input = useRef<HTMLInputElement>(null);
   const fileSizeInBytes = useRef(0);
+
+  const bitrateData = [
+    { timestamp: 0, bitrate: 1000 },
+    { timestamp: 1, bitrate: 2000 },
+    { timestamp: 2, bitrate: 3000 },
+    { timestamp: 3, bitrate: 4000 },
+    { timestamp: 4, bitrate: 5000 },
+    { timestamp: 5, bitrate: 6000 },
+    { timestamp: 6, bitrate: 7000 },
+    { timestamp: 7, bitrate: 8000 },
+    { timestamp: 8, bitrate: 9000 },
+    { timestamp: 9, bitrate: 10000 },
+    { timestamp: 10, bitrate: 11000 },
+    { timestamp: 11, bitrate: 12000 },
+    { timestamp: 12, bitrate: 13000 },
+    { timestamp: 13, bitrate: 14000 },
+    { timestamp: 14, bitrate: 15000 },
+    { timestamp: 15, bitrate: 16000 },
+    { timestamp: 16, bitrate: 17000 },
+    { timestamp: 17, bitrate: 18000 },
+    { timestamp: 18, bitrate: 19000 },
+    { timestamp: 19, bitrate: 20000 },
+    { timestamp: 20, bitrate: 21000 },
+    { timestamp: 21, bitrate: 22000 },
+    { timestamp: 22, bitrate: 23000 },
+    { timestamp: 23, bitrate: 24000 },
+    { timestamp: 24, bitrate: 25000 },
+    { timestamp: 25, bitrate: 26000 },
+    { timestamp: 26, bitrate: 27000 },
+    { timestamp: 27, bitrate: 28000 },
+    { timestamp: 28, bitrate: 29000 },
+    { timestamp: 29, bitrate: 30000 },
+    { timestamp: 30, bitrate: 31000 },
+    { timestamp: 31, bitrate: 32000 },
+    { timestamp: 32, bitrate: 33000 },
+    { timestamp: 33, bitrate: 34000 },
+    { timestamp: 34, bitrate: 35000 },
+    { timestamp: 35, bitrate: 36000 },
+    { timestamp: 36, bitrate: 37000 },
+    { timestamp: 37, bitrate: 38000 },
+    { timestamp: 38, bitrate: 39000 },
+    { timestamp: 39, bitrate: 40000 },
+    { timestamp: 40, bitrate: 41000 },
+  ];
 
   const processVideo = async (url: string) => {
     await new Promise((resolve) => setTimeout(resolve, 5000));
@@ -18,12 +71,7 @@ export default function Home() {
 
   const handleMetadataLoaded = () => {
     if (videoRef.current) {
-      const width = videoRef.current.videoWidth;
-      const height = videoRef.current.videoHeight;
-      setResolution({ width, height }); // Set resolution in state
-
-      const duration = videoRef.current.duration;
-      setDuration(duration);
+      setReRender(!rerender);
     }
   };
 
@@ -32,13 +80,16 @@ export default function Home() {
       <main className="p-4 h-auto pt-20">
         <div className=" rounded-lg border-gray-300 dark:border-gray-600 h-60 mb-4">
           <h1 className="mb-4 text-3xl font-extrabold text-gray-900 dark:text-white md:text-5xl lg:text-6xl">
-            <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">Mirage</span>{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
+              Mirage
+            </span>{" "}
             AI.
           </h1>
           <p className="text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">
-            Our AI technology identifies important video clips in CCTV footage and reduces the size of the tape by
-            removing unwanted data. This ensures that only the most relevant information is retained, making it easier
-            to review and store surveillance videos efficiently.
+            Our AI technology identifies important video clips in CCTV footage
+            and reduces the size of the tape by removing unwanted data. This
+            ensures that only the most relevant information is retained, making
+            it easier to review and store surveillance videos efficiently.
           </p>
         </div>
         <div className="flex">
@@ -131,7 +182,7 @@ export default function Home() {
           <div className="h-96">
             {video ? (
               processedVideo ? (
-                <video className="w-fit" controls src={processedVideo}></video>
+                <video className="w-fit" controls src={processedVideo} ref={processedVideoRef} onLoadedMetadata={handleMetadataLoaded}></video>
               ) : (
                 <div className="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-full flex justify-center">
                   <h3 className=" my-auto text-slate-100">Proccessing...</h3>
@@ -145,27 +196,85 @@ export default function Home() {
           </div>
           <div className="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72">
             Before Process Image Statistics
-            {video ? (
-              <div>
-                <p>Codec: </p>
-                <p>File Size: {(fileSizeInBytes.current / 1024 / 1024).toFixed(3)} MB</p>
-                <p>
-                  Resolution: {resolution.height} x {resolution.width}
-                </p>
-                <p>
-                  Duration: {duration > 60 ? (duration / 60).toString() + " Minute" : duration.toString() + " Seconds"}{" "}
-                </p>
-                <p>Bitrate: </p>
-              </div>
-            ) : (
-              ""
-            )}
+            <VideoStats
+              video={videoRef.current}
+              bitrateData={bitrateData}
+              fileSizeInBytes={fileSizeInBytes}
+            />
           </div>
           <div className="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72">
             After Process Image Statistics
+            {/* need to replace video with processed video ref  */}
+            <VideoStats
+              video={processedVideoRef.current}
+              bitrateData={bitrateData}
+              fileSizeInBytes={fileSizeInBytes}
+              />
           </div>
         </div>
       </main>
     </div>
   );
 }
+
+const VideoStats: React.FC<VideoInfoProps> = ({
+  video,
+  bitrateData,
+  fileSizeInBytes,
+}) => {
+  if (!video) return null;
+
+  const [resolution, setResolution] = useState({ width: 0, height: 0 });
+  const [duration, setDuration] = useState(0);
+  const [currentBitrate, setCurrentBitrate] = useState<number>(0);
+
+  const updateBitrate = () => {
+    // Get the current time of the video without decimals
+    const currentTime = Math.floor(video.currentTime);
+
+    // Find the bitrate based on the current timestamp
+    const bitrate = bitrateData.find(
+      (data: { timestamp: Number; bitrate: number }) =>
+        data.timestamp === currentTime
+    )?.bitrate;
+
+    // Update the current bitrate state
+    setCurrentBitrate(bitrate || 0);
+  };
+
+  useEffect(() => {
+    video.addEventListener("timeupdate", updateBitrate);
+
+    setResolution({
+      width: video.videoWidth,
+      height: video.videoHeight,
+    });
+    setDuration(video.duration);
+
+    return () => {
+      video.removeEventListener("timeupdate", updateBitrate);
+    };
+  }, [video]);
+
+  useEffect(() => {}, [video]);
+  return (
+    <>
+      <div>
+        <p>Codec: </p>
+        <p>
+          File Size: {(fileSizeInBytes.current / 1024 / 1024).toFixed(3)} MB
+        </p>
+        <p>
+          Resolution: {resolution.height} x {resolution.width}
+        </p>
+        <p>
+          Duration:{" "}
+          {duration > 60
+            ? (duration / 60).toString() + " Minute"
+            : duration.toString() + " Seconds"}{" "}
+        </p>
+        <p>Bitrate: {currentBitrate} Kbps</p>
+      </div>
+    </>
+  );
+};
