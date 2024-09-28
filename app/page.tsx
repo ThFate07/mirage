@@ -1,16 +1,30 @@
 "use client";
 
-import Link from "next/link";
 import { useRef, useState } from "react";
 
 export default function Home() {
   const [video, setVideo] = useState("");
   const [processedVideo, setProcessedVideo] = useState("");
+  const [resolution, setResolution] = useState({ width: 0, height: 0 });
+  const [duration, setDuration] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const input = useRef<HTMLInputElement>(null);
+  const fileSizeInBytes = useRef(0)
 
   const processVideo = async (url: string) => {
     await new Promise((resolve) => setTimeout(resolve, 5000));
     setProcessedVideo(url);
+  };  
+
+  const handleMetadataLoaded = () => {
+    if (videoRef.current) {
+      const width = videoRef.current.videoWidth;
+      const height = videoRef.current.videoHeight;
+      setResolution({ width, height }); // Set resolution in state
+
+      const duration = videoRef.current.duration;
+      setDuration(duration); 
+    }
   };
 
   return (
@@ -18,13 +32,16 @@ export default function Home() {
       <main className="p-4 h-auto pt-20">
         <div className=" rounded-lg border-gray-300 dark:border-gray-600 h-60 mb-4">
           <h1 className="mb-4 text-3xl font-extrabold text-gray-900 dark:text-white md:text-5xl lg:text-6xl">
-            <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">Mirage</span>{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
+              Mirage
+            </span>{" "}
             AI.
           </h1>
           <p className="text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">
-            Our AI technology identifies important video clips in CCTV footage and reduces the size of the tape by
-            removing unwanted data. This ensures that only the most relevant information is retained, making it easier
-            to review and store surveillance videos efficiently.
+            Our AI technology identifies important video clips in CCTV footage
+            and reduces the size of the tape by removing unwanted data. This
+            ensures that only the most relevant information is retained, making
+            it easier to review and store surveillance videos efficiently.
           </p>
         </div>
         <div className="flex">
@@ -78,7 +95,13 @@ export default function Home() {
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div className=" border-gray-300 dark:border-gray-600 h-48 md:h-96">
             {video ? (
-              <video className="w-full aspect-video" controls src={video}></video>
+              <video
+                className="w-full aspect-video"
+                controls
+                src={video}
+                ref={videoRef}
+                onLoadedMetadata={handleMetadataLoaded}
+              ></video>
             ) : (
               <div className="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-full flex justify-center">
                 <button
@@ -96,6 +119,8 @@ export default function Home() {
             onChange={(e) => {
               if (e.target.files) {
                 const file = e.target.files[0];
+                fileSizeInBytes.current = file.size;
+
                 const url = URL.createObjectURL(file);
                 setVideo(url);
                 processVideo(url);
@@ -123,6 +148,17 @@ export default function Home() {
           </div>
           <div className="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72">
             Before Process Image Statistics
+            {video ? (
+              <div>
+                <p>Codec: </p>
+                <p>File Size: {(fileSizeInBytes.current / 1024 / 1024).toFixed(3)} MB</p>
+                <p>Resolution: {resolution.height} x {resolution.width}</p>
+                <p>Duration: {duration > 60 ? (duration / 60).toString() + " Minute" : duration.toString() + " Seconds"} </p>
+                <p>Bitrate: </p>
+              </div>
+            ) : (
+              ""
+            )}
           </div>
           <div className="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72">
             After Process Image Statistics
