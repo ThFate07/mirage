@@ -80,16 +80,13 @@ export default function Home() {
       <main className="p-4 h-auto pt-20">
         <div className=" rounded-lg border-gray-300 dark:border-gray-600 h-60 mb-4">
           <h1 className="mb-4 text-3xl font-extrabold text-gray-900 dark:text-white md:text-5xl lg:text-6xl">
-            <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
-              Mirage
-            </span>{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">Mirage</span>{" "}
             AI.
           </h1>
           <p className="text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">
-            Our AI technology identifies important video clips in CCTV footage
-            and reduces the size of the tape by removing unwanted data. This
-            ensures that only the most relevant information is retained, making
-            it easier to review and store surveillance videos efficiently.
+            Our AI technology identifies important video clips in CCTV footage and reduces the size of the tape by
+            removing unwanted data. This ensures that only the most relevant information is retained, making it easier
+            to review and store surveillance videos efficiently.
           </p>
         </div>
         <div className="flex">
@@ -99,6 +96,7 @@ export default function Home() {
               <button
                 onClick={() => {
                   input.current && input.current.click();
+                  setProcessedVideo("");
                 }}
               >
                 <svg
@@ -182,7 +180,13 @@ export default function Home() {
           <div className="h-96">
             {video ? (
               processedVideo ? (
-                <video className="w-full h-full" controls src={processedVideo} ref={processedVideoRef} onLoadedMetadata={handleMetadataLoaded}></video>
+                <video
+                  className="w-full h-full"
+                  controls
+                  src={processedVideo}
+                  ref={processedVideoRef}
+                  onLoadedMetadata={handleMetadataLoaded}
+                ></video>
               ) : (
                 <div className="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-full flex justify-center">
                   <h3 className=" my-auto text-slate-100">Proccessing...</h3>
@@ -194,22 +198,12 @@ export default function Home() {
               </div>
             )}
           </div>
-          <div className="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72">
-            Before Process Image Statistics
-            <VideoStats
-              video={videoRef.current}
-              bitrateData={bitrateData}
-              fileSizeInBytes={fileSizeInBytes}
-            />
+          <div className="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72 p-4">
+            <VideoStats video={videoRef.current} bitrateData={bitrateData} fileSizeInBytes={fileSizeInBytes} />
           </div>
-          <div className="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72">
-            After Process Image Statistics
+          <div className="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72 p-4">
             {/* need to replace video with processed video ref  */}
-            <VideoStats
-              video={processedVideoRef.current}
-              bitrateData={bitrateData}
-              fileSizeInBytes={fileSizeInBytes}
-              />
+            <VideoStats video={processedVideoRef.current} bitrateData={bitrateData} fileSizeInBytes={fileSizeInBytes} />
           </div>
         </div>
       </main>
@@ -217,11 +211,7 @@ export default function Home() {
   );
 }
 
-const VideoStats: React.FC<VideoInfoProps> = ({
-  video,
-  bitrateData,
-  fileSizeInBytes,
-}) => {
+const VideoStats: React.FC<VideoInfoProps> = ({ video, bitrateData, fileSizeInBytes }) => {
   if (!video) return null;
 
   const [resolution, setResolution] = useState({ width: 0, height: 0 });
@@ -234,8 +224,7 @@ const VideoStats: React.FC<VideoInfoProps> = ({
 
     // Find the bitrate based on the current timestamp
     const bitrate = bitrateData.find(
-      (data: { timestamp: Number; bitrate: number }) =>
-        data.timestamp === currentTime
+      (data: { timestamp: Number; bitrate: number }) => data.timestamp === currentTime
     )?.bitrate;
 
     // Update the current bitrate state
@@ -259,22 +248,50 @@ const VideoStats: React.FC<VideoInfoProps> = ({
   useEffect(() => {}, [video]);
   return (
     <>
-      <div>
+      {/* <div>
         <p>Codec: </p>
-        <p>
-          File Size: {(fileSizeInBytes.current / 1024 / 1024).toFixed(3)} MB
-        </p>
+        <p>File Size: {(fileSizeInBytes.current / 1024 / 1024).toFixed(3)} MB</p>
         <p>
           Resolution: {resolution.height} x {resolution.width}
         </p>
-        <p>
-          Duration:{" "}
-          {duration > 60
-            ? (duration / 60).toString() + " Minute"
-            : duration.toString() + " Seconds"}{" "}
-        </p>
+        <p>Duration: {duration > 60 ? (duration / 60).toString() + " Minute" : duration.toString() + " Seconds"} </p>
         <p>Bitrate: {currentBitrate} Kbps</p>
-      </div>
+      </div> */}
+
+      <ul className="space-y-4 text-left text-gray-500 dark:text-gray-400">
+        <li className="flex items-center space-x-3 rtl:space-x-reverse">
+          File Size:{" "}
+          <span className="font-semibold px-1 text-gray-900 dark:text-white">
+            {(fileSizeInBytes.current / 1024 / 1024).toFixed(3)} MB
+          </span>
+        </li>
+        <li className="flex items-center space-x-3 rtl:space-x-reverse">
+          <span>
+            Resolution:{" "}
+            <span className="font-semibold text-gray-900 dark:text-white">
+              {resolution.height} x {resolution.width}
+            </span>
+          </span>
+        </li>
+        <li className="flex items-center space-x-3 rtl:space-x-reverse">
+          <span>
+            Duration:{" "}
+            <span className="font-semibold text-gray-900 dark:text-white">
+              {duration > 60 ? (duration / 60).toString() + " Minute" : duration.toString() + " Seconds"}
+            </span>
+          </span>
+        </li>
+        <li className="flex items-center space-x-3 rtl:space-x-reverse">
+          <span>
+            Bitrate: <span className="font-semibold text-gray-900 dark:text-white">{currentBitrate} Kbps</span>
+          </span>
+        </li>
+        <li className="flex items-center space-x-3 rtl:space-x-reverse">
+          <span>
+            Free updates: <span className="font-semibold text-gray-900 dark:text-white">6 months</span>
+          </span>
+        </li>
+      </ul>
     </>
   );
 };
