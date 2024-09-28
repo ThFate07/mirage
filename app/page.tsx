@@ -119,7 +119,7 @@ export default function Home() {
   }, [processedVideo]);
 
   return (
-    <div className="antialiased bg-gray-50 dark:bg-gray-900">
+    <div className="antialiased  dark:bg-gray-900">
       <main className="p-4 h-auto pt-20">
         <div className=" rounded-lg border-gray-300 dark:border-gray-600 h-60 mb-20 md:mb-4">
           <h1 className="mb-4 text-3xl font-extrabold text-gray-900 dark:text-white md:text-5xl lg:text-6xl">
