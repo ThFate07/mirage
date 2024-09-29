@@ -27,14 +27,14 @@ export default function Home() {
     formData.append("file", file);
 
     try {
-      const response = await fetch("http://localhost:5328/api/upload", {
+      const response = await fetch("http://127.0.0.1:5328/api/upload", {
         method: "POST",
         body: formData,
       });
 
       if (response.ok) {
         const data = await response.json();
-        const processedFileURL = `http://localhost:5328/api/processed/${data.processed_filename}`;
+        const processedFileURL = `http://127.0.0.1:5328/api/processed/${data.processed_filename}`;
         setProcessedVideo(processedFileURL);
         setProcessedVideoData({
           codec: data.processed_info.codec,
