@@ -200,5 +200,10 @@ def serve_processed_video(filename):
     mimetype = mimetypes.guess_type(file_path)[0]
     return send_from_directory(app.config['PROCESSED_FOLDER'], filename, mimetype=mimetype)
 
+
+@app.route('/api/test',  methods=['GET'])
+def test():
+   return jsonify({'message': 'API is working'}), 200
+
 if __name__ == '__main__':
     app.run(port=5328, debug=True)
