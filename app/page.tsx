@@ -62,7 +62,17 @@ export default function Home() {
   }, [video]);
 
   useEffect(() => { 
-
+    // send a request to the server to get api 
+    fetch("http://127.0.0.1/api/test", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .catch((error) => console.error("Error:", error));
+      
   }, [])
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-100">
